@@ -124,9 +124,7 @@
             </div>
 
             <!-- SISI KANAN: FORM INPUTS (7 COLS) -->
-            <form action="/api/admin/bookings" method="POST" class="lg:col-span-7 flex flex-col justify-between space-y-6" id="booking-form">
-                @csrf
-                
+            <form id="booking-form" class="lg:col-span-7 flex flex-col justify-between space-y-6">
                 <div class="space-y-6">
                     <!-- SECTION 0: VEHICLE SELECTION -->
                     <div>
@@ -332,22 +330,70 @@
             document.getElementById('spec-price').textContent = `Rp${car.price_per_day.toLocaleString('id-ID')}`;
         }
 
+        // Handle form submission with AJAX
+        document.getElementById('booking-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const carSelect = document.getElementById('car-select');
+            if (!carSelect.value) {
+                alert('Silakan pilih kendaraan terlebih dahulu!');
+                return;
+            }
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+
+            try {
+                const formData = {
+                    name: document.getElementById('form-name').value,
+                    email: document.getElementById('form-email').value,
+                    phone: document.getElementById('form-phone').value,
+                    car_id: parseInt(carSelect.value),
+                    model_choice: document.getElementById('model-choice-input').value,
+                    date: document.getElementById('form-date').value,
+                    location: document.getElementById('form-location').value
+                };
+
+                const response = await fetch('/bookings/store', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show success message
+                    const successMsg = `✓ Booking berhasil dibuat!\nNama: ${data.booking.user.name}\nMobil: ${data.booking.car.make} ${data.booking.car.model}`;
+                    
+                    // Redirect after showing message
+                    setTimeout(() => {
+                        window.location.href = '/booking/success?id=' + data.booking.id;
+                    }, 500);
+                } else {
+                    throw new Error(data.message || 'Booking failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error: ' + error.message + '\nSilakan coba lagi.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
+        });
+
         // Load cars on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadCars();
-            
-            // Handle form submission
-            const form = document.getElementById('booking-form');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    const carSelect = document.getElementById('car-select');
-                    if (!carSelect.value) {
-                        e.preventDefault();
-                        alert('Silakan pilih kendaraan terlebih dahulu!');
-                        return false;
-                    }
-                });
-            }
         });
     </script>
 </body>
