@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM php:8.3-fpm-alpine AS build
+FROM php:8.4-fpm-alpine AS build
 
 RUN apk add --no-cache \
     bash \
@@ -33,7 +33,7 @@ RUN npm run build \
   && rm -rf node_modules npm-debug.log \
   && composer dump-autoload --optimize
 
-FROM php:8.3-fpm-alpine AS runtime
+FROM php:8.4-fpm-alpine AS runtime
 
 RUN apk add --no-cache \
     icu-dev \
