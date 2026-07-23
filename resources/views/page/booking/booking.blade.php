@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Reserve Your Flight - NEO DRIVE</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,6 +65,19 @@
             </div>
         </div>
 
+        <!-- PUBLIC: Recent Reservations (from admin) -->
+        <div class="max-w-2xl mx-auto mb-6" id="public-bookings-panel">
+            <div class="bg-[#111318] border border-gray-800 p-4 rounded space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] text-neon font-heading font-bold uppercase tracking-widest">Recent Reservations</span>
+                    <a href="/admin" class="text-[10px] text-gray-400 hover:text-neon">Admin Portal</a>
+                </div>
+                <div id="public-bookings-list" class="space-y-3">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+
         <!-- MAIN FORM CONTAINER -->
         <div class="bg-[#111318] border border-gray-800/80 rounded-lg p-6 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 shadow-2xl">
             
@@ -110,7 +124,7 @@
             </div>
 
             <!-- SISI KANAN: FORM INPUTS (7 COLS) -->
-            <form action="#" method="POST" class="lg:col-span-7 flex flex-col justify-between space-y-6">
+            <form action="/api/admin/bookings" method="POST" class="lg:col-span-7 flex flex-col justify-between space-y-6">
                 @csrf
                 
                 <div class="space-y-6">
@@ -120,25 +134,28 @@
                             01 Personal Information
                         </span>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider block mb-1.5">First Name</label>
-                                <input type="text" value="Alexander" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-white px-3 py-2.5 rounded">
+                                <input id="form-name" name="name" type="text" value="Alexander" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-white px-3 py-2.5 rounded">
                             </div>
                             <div>
                                 <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider block mb-1.5">Last Name</label>
-                                <input type="text" value="Novak" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-white px-3 py-2.5 rounded">
+                                <input name="last_name" type="text" value="Novak" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-white px-3 py-2.5 rounded">
                             </div>
                         </div>
+                        <!-- Hidden fields required by API -->
+                        <input type="hidden" name="model_choice" value="NEO AVENTUS">
+                        <input type="hidden" id="form-date" name="date" value="{{ date('Y-m-d') }}">
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider block mb-1.5">Email Address</label>
-                                <input type="email" value="a.novak@domain.com" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-white px-3 py-2.5 rounded">
+                                <input id="form-email" name="email" type="email" value="a.novak@domain.com" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-white px-3 py-2.5 rounded">
                             </div>
                             <div>
                                 <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider block mb-1.5">Phone Number</label>
-                                <input type="text" value="+1 (310) 000-0000" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-white px-3 py-2.5 rounded">
+                                <input id="form-phone" name="phone" type="text" value="+1 (310) 000-0000" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-white px-3 py-2.5 rounded">
                             </div>
                         </div>
                     </div>
@@ -151,11 +168,11 @@
 
                         <div class="mb-4">
                             <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider block mb-1.5">Select Nearest Experience Center</label>
-                            <select class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-gray-300 px-3 py-2.5 rounded appearance-none cursor-pointer">
-                                <option value="">Choose your nearest location...</option>
-                                <option value="1">Jakarta Flagship Experience Center</option>
-                                <option value="2">Tokyo Neo Gallery</option>
-                                <option value="3">Los Angeles Studio</option>
+                            <select id="form-location" name="location" required class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-gray-300 px-3 py-2.5 rounded appearance-none cursor-pointer">
+                                <option value="" disabled selected>Choose your nearest location...</option>
+                                <option value="Jakarta Flagship Experience Center">Jakarta Flagship Experience Center</option>
+                                <option value="Tokyo Neo Gallery">Tokyo Neo Gallery</option>
+                                <option value="Los Angeles Studio">Los Angeles Studio</option>
                             </select>
                         </div>
 
