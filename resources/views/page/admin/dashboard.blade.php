@@ -463,6 +463,155 @@
             </div>
 
             <!-- ==========================================
+                 ADD NEW VEHICLE FORM
+                 ========================================== -->
+            <div class="bg-[#111318] border border-neon/30 p-8 rounded grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-2 h-6 bg-neon"></div>
+                        <h2 class="font-heading text-lg font-bold uppercase tracking-wider">Add New Vehicle</h2>
+                    </div>
+                    <p class="text-gray-400 text-xs mb-6">Tambahkan kendaraan baru ke fleet. Isi semua field yang diperlukan.</p>
+                    
+                    <form id="add-car-form" onsubmit="submitNewCar(event)" class="space-y-4 text-xs font-semibold uppercase tracking-wider">
+                        <div>
+                            <label class="text-[9px] text-gray-500 block mb-1">Car Make *</label>
+                            <input type="text" required id="car-make" placeholder="e.g. Toyota, BMW, Mercedes" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                        </div>
+
+                        <div>
+                            <label class="text-[9px] text-gray-500 block mb-1">Car Model *</label>
+                            <input type="text" required id="car-model" placeholder="e.g. Camry, 3 Series, E-Class" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                        </div>
+
+                        <div>
+                            <label class="text-[9px] text-gray-500 block mb-1">Plate Number *</label>
+                            <input type="text" required id="car-plate" placeholder="e.g. NEO-001, B-1234-XY" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                        </div>
+
+                        <div>
+                            <label class="text-[9px] text-gray-500 block mb-1">Year *</label>
+                            <input type="number" required id="car-year" min="1900" max="2030" placeholder="2024" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                        </div>
+
+                        <div>
+                            <label class="text-[9px] text-gray-500 block mb-1">Price Per Day (Rp) *</label>
+                            <input type="number" required id="car-price" min="0" placeholder="500000" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                        </div>
+
+                        <div>
+                            <label class="text-[9px] text-gray-500 block mb-1">Showroom Location *</label>
+                            <select required id="car-showroom" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                                <option value="">-- Pilih Showroom --</option>
+                                <option value="1">Jakarta Experience Center</option>
+                                <option value="2">Surabaya Showroom</option>
+                                <option value="3">Bandung Gallery</option>
+                                <option value="4">Medan Branch</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-[9px] text-gray-500 block mb-1">Notes (Optional)</label>
+                            <textarea id="car-notes" placeholder="Add any notes about this vehicle..." rows="3" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs resize-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-neon text-black font-bold text-[10px] py-3 uppercase tracking-widest hover:bg-lime-400 transition mt-6">
+                            ✓ Tambah Kendaraan
+                        </button>
+                    </form>
+                </div>
+
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-2 h-6 bg-cyan-400"></div>
+                        <h2 class="font-heading text-lg font-bold uppercase tracking-wider">Fleet Inventory</h2>
+                    </div>
+                    <p class="text-gray-400 text-xs mb-6">Daftar kendaraan yang terdaftar di sistem.</p>
+                    
+                    <div class="space-y-3 max-h-[550px] overflow-y-auto pr-2" id="cars-list">
+                        <div class="text-gray-500 text-xs text-center py-8">
+                            <p>Loading vehicles...</p>
+                        </div>
+                    </div>
+
+                    <button onclick="loadCarsList()" class="w-full bg-cyan-400 text-black font-bold text-[10px] py-2 uppercase tracking-widest hover:bg-cyan-300 transition mt-4">
+                        ↻ Refresh List
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ==========================================
+                 PANEL 3: FLEET CONFIGURATOR (HIDDEN)
+                 ========================================== -->
+            <div id="panel-fleet" class="panel-view grid grid-cols-1 lg:grid-cols-3 gap-6 hidden">
+                <!-- Aventus Config Card -->
+                <div class="bg-[#111318] border border-gray-800 p-6 rounded relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-neon"></div>
+                    <span class="text-[9px] text-neon font-bold tracking-widest block uppercase mb-2">V12 Hybrid Flagship</span>
+                    <h3 class="font-heading text-xl font-bold uppercase mb-6">NEO AVENTUS</h3>
+                    <div class="space-y-4 mb-8 text-xs">
+                        <div class="flex justify-between border-b border-gray-900 pb-2">
+                            <span class="text-gray-500">Base MSRP Price</span>
+                            <input type="text" id="price-aventus" value="$1,200,000" class="bg-black/60 border border-gray-800 text-right px-2 py-0.5 text-white font-bold max-w-[120px] focus:outline-none focus:border-neon">
+                        </div>
+                        <div class="flex justify-between border-b border-gray-900 pb-2">
+                            <span class="text-gray-500">Power Output</span>
+                            <span class="text-white font-bold">950 HP</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-900 pb-2">
+                            <span class="text-gray-500">Global Allocation</span>
+                            <span class="text-white font-bold">88 Units</span>
+                        </div>
+                    </div>
+                    <button onclick="saveCarSettings('aventus')" class="w-full bg-neon text-black font-bold text-[10px] py-2.5 uppercase tracking-widest hover:bg-lime-400 transition">Save Specs</button>
+                </div>
+
+                <!-- Vortex-X Config Card -->
+                <div class="bg-[#111318] border border-gray-800 p-6 rounded relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-400"></div>
+                    <span class="text-[9px] text-cyan-400 font-bold tracking-widest block uppercase mb-2">Quad-Motor EV</span>
+                    <h3 class="font-heading text-xl font-bold uppercase mb-6">VORTEX-X</h3>
+                    <div class="space-y-4 mb-8 text-xs">
+                        <div class="flex justify-between border-b border-gray-900 pb-2">
+                            <span class="text-gray-500">Base MSRP Price</span>
+                            <input type="text" id="price-vortex" value="$950,000" class="bg-black/60 border border-gray-800 text-right px-2 py-0.5 text-white font-bold max-w-[120px] focus:outline-none focus:border-cyan-400">
+                        </div>
+                        <div class="flex justify-between border-b border-gray-900 pb-2">
+                            <span class="text-gray-500">Power Output</span>
+                            <span class="text-white font-bold">1,100 HP</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-900 pb-2">
+                            <span class="text-gray-500">Global Allocation</span>
+                            <span class="text-white font-bold">120 Units</span>
+                        </div>
+                    </div>
+                    <button onclick="saveCarSettings('vortex')" class="w-full bg-cyan-400 text-black font-bold text-[10px] py-2.5 uppercase tracking-widest hover:bg-cyan-300 transition">Save Specs</button>
+                </div>
+
+                <!-- Ghost-R Config Card -->
+                <div class="bg-[#111318] border border-gray-800 p-6 rounded relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-white"></div>
+                    <span class="text-[9px] text-white font-bold tracking-widest block uppercase mb-2">V8 twin-turbo stealth</span>
+                    <h3 class="font-heading text-xl font-bold uppercase mb-6">GHOST-R</h3>
+                    <div class="space-y-4 mb-8 text-xs">
+                        <div class="flex justify-between border-b border-gray-900 pb-2">
+                            <span class="text-gray-500">Base MSRP Price</span>
+                            <input type="text" id="price-ghost" value="$880,000" class="bg-black/60 border border-gray-800 text-right px-2 py-0.5 text-white font-bold max-w-[120px] focus:outline-none focus:border-white">
+                        </div>
+                        <div class="flex justify-between border-b border-gray-900 pb-2">
+                            <span class="text-gray-500">Power Output</span>
+                            <span class="text-white font-bold">720 HP</span>
+                        </div>
+                        <div class="flex justify-between border-b border-gray-900 pb-2">
+                            <span class="text-gray-500">Global Allocation</span>
+                            <span class="text-white font-bold">50 Units</span>
+                        </div>
+                    </div>
+                    <button onclick="saveCarSettings('ghost')" class="w-full bg-white text-black font-bold text-[10px] py-2.5 uppercase tracking-widest hover:bg-gray-100 transition">Save Specs</button>
+                </div>
+            </div>
+
+            <!-- ==========================================
                  PANEL 4: SYSTEM TELEMETRY
                  ========================================== -->
             <div id="panel-telemetry" class="panel-view grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
@@ -1024,10 +1173,313 @@
             if (console) console.innerHTML = '<div>[Console Cleared]</div>';
         }
 
+        // Submit New Car Form
+        function submitNewCar(event) {
+            event.preventDefault();
+
+            const carData = {
+                make: document.getElementById('car-make').value,
+                model: document.getElementById('car-model').value,
+                plate_number: document.getElementById('car-plate').value,
+                year: parseInt(document.getElementById('car-year').value),
+                price_per_day: parseFloat(document.getElementById('car-price').value),
+                showroom_id: parseInt(document.getElementById('car-showroom').value),
+                notes: document.getElementById('car-notes').value || null
+            };
+
+            fetch('/api/admin/cars', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(carData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(err));
+                }
+                return response.json();
+            })
+            .then(data => {
+                showToast(`✓ Mobil ${data.model} (${data.plate_number}) berhasil ditambahkan!`, 'success');
+                addActivityLog(`New vehicle: ${data.make} ${data.model} (${data.plate_number}) added to fleet at Rp${data.price_per_day}/day.`, 'neon');
+                
+                // Reset form
+                document.getElementById('add-car-form').reset();
+                
+                // Refresh list
+                setTimeout(() => {
+                    loadCarsList();
+                }, 500);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorMsg = error.message || 'Gagal menambahkan mobil. Cek console untuk detail.';
+                showToast('❌ Error: ' + errorMsg, 'error');
+                addActivityLog(`Failed to add vehicle. Error: ${errorMsg}`, 'red');
+            });
+        }
+
+        // Load and Display Cars List
+        function loadCarsList() {
+            const carsList = document.getElementById('cars-list');
+            carsList.innerHTML = '<div class="text-gray-500 text-xs text-center py-4">Loading...</div>';
+
+            fetch('/api/admin/cars', {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data || data.length === 0) {
+                    carsList.innerHTML = '<div class="text-gray-500 text-xs text-center py-8">Belum ada kendaraan terdaftar</div>';
+                    return;
+                }
+
+                carsList.innerHTML = '';
+                data.forEach(car => {
+                    const carDiv = document.createElement('div');
+                    carDiv.className = 'bg-black/40 border border-gray-800 p-4 rounded hover:border-neon/50 transition';
+                    carDiv.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="text-neon font-bold text-xs">${car.make} ${car.model}</p>
+                                <p class="text-gray-500 text-[9px] mt-0.5">${car.plate_number}</p>
+                            </div>
+                            <button onclick="deleteCarFromUI(${car.id})" class="text-red-500 hover:text-red-400 text-xs font-bold">×</button>
+                        </div>
+                        <div class="space-y-1 text-[9px] text-gray-400">
+                            <div class="flex justify-between">
+                                <span>Tahun:</span>
+                                <span class="text-white">${car.year}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Harga/hari:</span>
+                                <span class="text-cyan-400 font-semibold">Rp${car.price_per_day.toLocaleString('id-ID')}</span>
+                            </div>
+                            ${car.showroom ? `<div class="flex justify-between">
+                                <span>Showroom:</span>
+                                <span class="text-white">${car.showroom.name}</span>
+                            </div>` : ''}
+                            ${car.notes ? `<div class="flex justify-between">
+                                <span>Notes:</span>
+                                <span class="text-white">${car.notes}</span>
+                            </div>` : ''}
+                        </div>
+                    `;
+                    carsList.appendChild(carDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                carsList.innerHTML = '<div class="text-red-500 text-xs text-center py-4">Gagal memuat data</div>';
+            });
+        }
+
+        // Delete Car from UI
+        function deleteCarFromUI(carId) {
+            if (!confirm('Yakin ingin menghapus kendaraan ini?')) {
+                return;
+            }
+
+            fetch(`/api/admin/cars/${carId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.deleted) {
+                    showToast('✓ Kendaraan berhasil dihapus', 'success');
+                    addActivityLog(`Vehicle ID ${carId} has been removed from fleet.`, 'red');
+                    loadCarsList();
+                } else {
+                    showToast('❌ Gagal menghapus kendaraan', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('❌ Error: ' + error.message, 'error');
+            });
+        }
+
+        // Add New Car Function (Console)
+        function addNewCar() {
+            const make = prompt('Enter car make (e.g., Toyota, BMW, Mercedes):');
+            if (!make) return;
+
+            const model = prompt('Enter car model (e.g., Camry, 3 Series):');
+            if (!model) return;
+
+            const plateNumber = prompt('Enter plate number (e.g., NEO-001):');
+            if (!plateNumber) return;
+
+            const year = prompt('Enter year (e.g., 2024):', '2024');
+            if (!year || isNaN(year)) {
+                showToast('Invalid year entered', 'error');
+                return;
+            }
+
+            const pricePerDay = prompt('Enter price per day (e.g., 500000):', '500000');
+            if (!pricePerDay || isNaN(pricePerDay)) {
+                showToast('Invalid price entered', 'error');
+                return;
+            }
+
+            const notes = prompt('Enter notes (optional):', '');
+            const showroomId = prompt('Enter showroom ID (e.g., 1):', '1');
+
+            if (!showroomId || isNaN(showroomId)) {
+                showToast('Invalid showroom ID', 'error');
+                return;
+            }
+
+            const carData = {
+                make: make,
+                model: model,
+                plate_number: plateNumber,
+                year: parseInt(year),
+                price_per_day: parseFloat(pricePerDay),
+                notes: notes || null,
+                showroom_id: parseInt(showroomId)
+            };
+
+            // Send to API
+            fetch('/api/admin/cars', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(carData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    showToast(`✓ Mobil ${model} (${plateNumber}) berhasil ditambahkan!`, 'success');
+                    addActivityLog(`New vehicle added: ${make} ${model} (${plateNumber}) at Rp${pricePerDay}/day.`, 'neon');
+                } else {
+                    showToast('Gagal menambahkan mobil', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Terjadi kesalahan: ' + error.message, 'error');
+            });
+        }
+
+        // Get List of Cars
+        function getCarsList() {
+            fetch('/api/admin/cars', {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Cars List:', data);
+                let message = 'Daftar Mobil:\n\n';
+                data.forEach(car => {
+                    message += `- ${car.make} ${car.model} (${car.plate_number})\n  Tahun: ${car.year}, Harga: Rp${car.price_per_day}/hari\n\n`;
+                });
+                alert(message || 'Tidak ada mobil terdaftar');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Gagal mengambil data mobil', 'error');
+            });
+        }
+
+        // Delete Car
+        function deleteCar() {
+            const carId = prompt('Masukkan ID mobil yang ingin dihapus:');
+            if (!carId || isNaN(carId)) {
+                showToast('ID mobil tidak valid', 'error');
+                return;
+            }
+
+            if (!confirm('Apakah Anda yakin ingin menghapus mobil ini?')) {
+                return;
+            }
+
+            fetch(`/api/admin/cars/${carId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.deleted) {
+                    showToast('Mobil berhasil dihapus', 'success');
+                    addActivityLog(`Vehicle with ID ${carId} has been removed from fleet.`, 'red');
+                } else {
+                    showToast('Gagal menghapus mobil', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Terjadi kesalahan: ' + error.message, 'error');
+            });
+        }
+
+        // Update Car
+        function updateCar() {
+            const carId = prompt('Masukkan ID mobil yang ingin diubah:');
+            if (!carId || isNaN(carId)) {
+                showToast('ID mobil tidak valid', 'error');
+                return;
+            }
+
+            const field = prompt('Field yang ingin diubah (make/model/plate_number/year/price_per_day/notes):');
+            if (!field) return;
+
+            const value = prompt(`Masukkan nilai baru untuk ${field}:`);
+            if (value === null) return;
+
+            const updateData = {};
+            updateData[field] = isNaN(value) ? value : parseFloat(value);
+
+            fetch(`/api/admin/cars/${carId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(updateData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.id) {
+                    showToast(`Mobil berhasil diperbarui: ${data.model}`, 'success');
+                    addActivityLog(`Vehicle ID ${carId} updated: ${field} = ${value}.`, 'cyan');
+                } else {
+                    showToast('Gagal memperbarui mobil', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Terjadi kesalahan: ' + error.message, 'error');
+            });
+        }
+
         // Initialize state
         window.addEventListener('DOMContentLoaded', () => {
             loadState();
             initTelemetryMeters();
+            loadCarsList();
+
+            // Print Car Management Guide to Console
+            console.log('%c🚗 CAR MANAGEMENT FUNCTIONS AVAILABLE', 'color: #ccff00; font-size: 14px; font-weight: bold;');
+            console.log('%cUse these commands in browser console:', 'color: #ccff00; font-size: 12px;');
+            console.log('%caddNewCar() - Tambah mobil baru (via prompt)', 'color: #00ff00; font-size: 11px;');
+            console.log('%cgetCarsList() - Lihat daftar semua mobil', 'color: #00ff00; font-size: 11px;');
+            console.log('%cupdateCar() - Perbarui data mobil', 'color: #00ff00; font-size: 11px;');
+            console.log('%cdeleteCar() - Hapus mobil', 'color: #00ff00; font-size: 11px;');
+            console.log('%c📝 FORM TAMBAH MOBIL SUDAH TERSEDIA DI DASHBOARD!', 'color: #ccff00; font-size: 12px; font-weight: bold;');
 
             // Populate initial activities
             addActivityLog("Rin Tohsaka requested test drive for VORTEX-X.", "cyan");

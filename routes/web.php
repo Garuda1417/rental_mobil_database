@@ -23,9 +23,19 @@ Route::get('/admin', function(){
 
 // API routes for admin management (simple, same file for this project)
 use App\Http\Controllers\AdminBookingController;
+use App\Http\Controllers\AdminCarController;
 use Illuminate\Support\Facades\Route as FRoute;
 
+// Booking Management APIs
 FRoute::get('/api/admin/bookings', [AdminBookingController::class, 'index']);
 FRoute::post('/api/admin/bookings', [AdminBookingController::class, 'store']);
 FRoute::patch('/api/admin/bookings/{booking}', [AdminBookingController::class, 'update']);
 FRoute::delete('/api/admin/bookings/{booking}', [AdminBookingController::class, 'destroy']);
+
+// Car Management APIs
+FRoute::get('/api/admin/cars', [AdminCarController::class, 'index']);
+FRoute::post('/api/admin/cars', [AdminCarController::class, 'store']);
+FRoute::get('/api/admin/cars/{car}', [AdminCarController::class, 'show']);
+FRoute::patch('/api/admin/cars/{car}', [AdminCarController::class, 'update']);
+FRoute::delete('/api/admin/cars/{car}', [AdminCarController::class, 'destroy']);
+FRoute::get('/api/admin/showrooms', [AdminCarController::class, 'getShowrooms']);
