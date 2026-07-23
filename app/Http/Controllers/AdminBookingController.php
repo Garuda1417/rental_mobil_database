@@ -21,7 +21,8 @@ class AdminBookingController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:50',
-            'model_choice' => 'required|string',
+            'car_id' => 'nullable|exists:cars,id',
+            'model_choice' => 'nullable|string|max:255',
             'date' => 'required|date',
             'location' => 'required|string',
         ]);
@@ -32,10 +33,22 @@ class AdminBookingController extends Controller
             ['name' => $data['name'], 'password' => bcrypt(str()->random(12))]
         );
 
-        // find a car by model (simple matching)
-        $car = Car::where('model', $data['model_choice'])->first();
-        if (! $car) {
-            $car = Car::create([ 'model' => $data['model_choice'], 'plate_number' => 'AUTO-'.time() ]);
+        // Get car - prioritize car_id from database
+        if (!empty($data['car_id'])) {
+            $car = Car::find($data['car_id']);
+        } else {
+            // Fallback to model_choice if car_id not provided
+            $car = Car::where('model', $data['model_choice'])->first();
+            if (!$car) {
+                $car = Car::create([
+                    'model' => $data['model_choice'],
+                    'plate_number' => 'AUTO-'.time(),
+                    'make' => 'Unknown',
+                    'year' => date('Y'),
+                    'price_per_day' => 0,
+                    'showroom_id' => 1
+                ]);
+            }
         }
 
         $booking = Booking::create([

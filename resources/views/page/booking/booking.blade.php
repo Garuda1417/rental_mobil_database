@@ -93,20 +93,20 @@
 
                     <!-- Selected Specs -->
                     <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest block">Selected Model</span>
-                    <h2 class="font-heading text-2xl font-bold text-white uppercase tracking-wide mb-4">NEO-AVENTUS</h2>
+                    <h2 class="font-heading text-2xl font-bold text-white uppercase tracking-wide mb-4" id="selected-model-name">SELECT A CAR</h2>
 
-                    <div class="space-y-2 text-xs border-t border-b border-gray-800/60 py-4 my-4">
+                    <div class="space-y-2 text-xs border-t border-b border-gray-800/60 py-4 my-4" id="selected-specs">
                         <div class="flex justify-between">
-                            <span class="text-gray-500 uppercase font-semibold">Color</span>
-                            <span class="text-neon font-medium">Neon Lime</span>
+                            <span class="text-gray-500 uppercase font-semibold">Plate Number</span>
+                            <span class="text-neon font-medium" id="spec-plate">--</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500 uppercase font-semibold">Output</span>
-                            <span class="text-white font-medium">950 HP</span>
+                            <span class="text-gray-500 uppercase font-semibold">Year</span>
+                            <span class="text-white font-medium" id="spec-year">--</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-500 uppercase font-semibold">Trim</span>
-                            <span class="text-neon font-medium">Carbon Series</span>
+                            <span class="text-gray-500 uppercase font-semibold">Price/Day</span>
+                            <span class="text-neon font-medium" id="spec-price">--</span>
                         </div>
                     </div>
 
@@ -124,11 +124,24 @@
             </div>
 
             <!-- SISI KANAN: FORM INPUTS (7 COLS) -->
-            <form action="/api/admin/bookings" method="POST" class="lg:col-span-7 flex flex-col justify-between space-y-6">
+            <form action="/api/admin/bookings" method="POST" class="lg:col-span-7 flex flex-col justify-between space-y-6" id="booking-form">
                 @csrf
                 
                 <div class="space-y-6">
-                    <!-- SECTION 1: PERSONAL INFO -->
+                    <!-- SECTION 0: VEHICLE SELECTION -->
+                    <div>
+                        <span class="text-[10px] text-neon font-heading font-bold uppercase tracking-widest block mb-4">
+                            00 Select Your Vehicle
+                        </span>
+
+                        <div>
+                            <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider block mb-1.5">Available Vehicles</label>
+                            <select id="car-select" name="car_id" required class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-gray-300 px-3 py-2.5 rounded appearance-none cursor-pointer">
+                                <option value="" disabled selected>Loading vehicles...</option>
+                            </select>
+                            <input type="hidden" name="model_choice" id="model-choice-input" value="">
+                        </div>
+                    </div>
                     <div>
                         <span class="text-[10px] text-neon font-heading font-bold uppercase tracking-widest block mb-4">
                             01 Personal Information
@@ -145,7 +158,6 @@
                             </div>
                         </div>
                         <!-- Hidden fields required by API -->
-                        <input type="hidden" name="model_choice" value="NEO AVENTUS">
                         <input type="hidden" id="form-date" name="date" value="{{ date('Y-m-d') }}">
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -266,5 +278,77 @@
         </div>
     </footer>
 
+    <script>
+        let carsList = [];
+
+        // Load cars from database
+        async function loadCars() {
+            try {
+                const response = await fetch('/api/admin/cars');
+                const data = await response.json();
+                carsList = data;
+                populateCarSelect(data);
+            } catch (error) {
+                console.error('Error loading cars:', error);
+                const select = document.getElementById('car-select');
+                select.innerHTML = '<option value="" disabled selected>Error loading vehicles</option>';
+            }
+        }
+
+        // Populate car selection dropdown
+        function populateCarSelect(cars) {
+            const select = document.getElementById('car-select');
+            select.innerHTML = '<option value="" disabled selected>Choose a vehicle...</option>';
+            
+            if (cars.length === 0) {
+                select.innerHTML = '<option value="" disabled>No vehicles available</option>';
+                return;
+            }
+
+            cars.forEach(car => {
+                const option = document.createElement('option');
+                option.value = car.id;
+                option.textContent = `${car.make} ${car.model} (${car.plate_number}) - Rp${car.price_per_day.toLocaleString('id-ID')}/day`;
+                option.dataset.carData = JSON.stringify(car);
+                select.appendChild(option);
+            });
+        }
+
+        // Handle car selection change
+        document.getElementById('car-select').addEventListener('change', function() {
+            const selectedIndex = this.selectedIndex;
+            if (selectedIndex > 0) {
+                const car = carsList[selectedIndex - 1];
+                updateCarSummary(car);
+                document.getElementById('model-choice-input').value = `${car.make} ${car.model}`;
+            }
+        });
+
+        // Update car summary display
+        function updateCarSummary(car) {
+            document.getElementById('selected-model-name').textContent = `${car.make} ${car.model}`;
+            document.getElementById('spec-plate').textContent = car.plate_number;
+            document.getElementById('spec-year').textContent = car.year;
+            document.getElementById('spec-price').textContent = `Rp${car.price_per_day.toLocaleString('id-ID')}`;
+        }
+
+        // Load cars on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCars();
+            
+            // Handle form submission
+            const form = document.getElementById('booking-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const carSelect = document.getElementById('car-select');
+                    if (!carSelect.value) {
+                        e.preventDefault();
+                        alert('Silakan pilih kendaraan terlebih dahulu!');
+                        return false;
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
