@@ -180,9 +180,13 @@
                             <label class="text-[10px] text-gray-400 uppercase font-bold tracking-wider block mb-1.5">Select Nearest Experience Center</label>
                             <select id="form-location" name="location" required class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-xs text-gray-300 px-3 py-2.5 rounded appearance-none cursor-pointer">
                                 <option value="" disabled selected>Choose your nearest location...</option>
-                                <option value="Jakarta Flagship Experience Center">Jakarta Flagship Experience Center</option>
-                                <option value="Tokyo Neo Gallery">Tokyo Neo Gallery</option>
-                                <option value="Los Angeles Studio">Los Angeles Studio</option>
+                                @forelse ($showrooms as $showroom)
+                                    <option value="{{ $showroom->name }} - {{ $showroom->city }}">{{ $showroom->name }} ({{ $showroom->city }})</option>
+                                @empty
+                                    <option value="Jakarta Flagship Experience Center">Jakarta Flagship Experience Center</option>
+                                    <option value="Tokyo Neo Gallery">Tokyo Neo Gallery</option>
+                                    <option value="Los Angeles Studio">Los Angeles Studio</option>
+                                @endforelse
                             </select>
                         </div>
 

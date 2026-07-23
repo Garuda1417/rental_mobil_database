@@ -139,6 +139,37 @@
 
     </main>
 
+    <section class="max-w-7xl mx-auto px-6 py-10">
+        <div class="border border-gray-800 rounded-3xl bg-black/60 p-6">
+            <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl md:text-3xl font-heading font-black text-neon uppercase">Lokasi Showroom</h2>
+                    <p class="text-gray-400 text-sm md:text-base max-w-2xl mt-2">Temukan showroom aktif kami untuk melihat unit mobil dan melakukan test drive.</p>
+                </div>
+                <span class="text-[10px] uppercase tracking-widest text-gray-500">Total Showroom: {{ $showrooms->count() }}</span>
+            </div>
+
+            <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                @forelse ($showrooms as $showroom)
+                    <div class="border border-gray-800 rounded-2xl p-5 bg-gray-900/50 hover:border-neon transition">
+                        <h3 class="text-lg font-bold text-neon">{{ $showroom->name }}</h3>
+                        <p class="text-sm text-gray-300 mt-2">{{ $showroom->city }}</p>
+                        @if ($showroom->address)
+                            <p class="text-sm text-gray-400 mt-3">{{ $showroom->address }}</p>
+                        @endif
+                        @if ($showroom->phone)
+                            <p class="text-sm text-gray-400 mt-2">Tel: {{ $showroom->phone }}</p>
+                        @endif
+                    </div>
+                @empty
+                    <div class="sm:col-span-2 xl:col-span-3 border border-dashed border-gray-700 rounded-2xl p-8 text-center text-gray-400 bg-gray-900/30">
+                        Belum ada showroom tersedia. Silakan kunjungi halaman admin untuk menambahkan showroom baru.
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </section>
+
     <!-- BOTTOM BAR / STICKY FOOTER ACTION -->
     <div class="border-t border-gray-800 bg-[#08090b] py-3 px-6 sticky bottom-0 z-40">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">

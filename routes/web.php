@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Showroom;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\AdminCarController;
@@ -8,11 +9,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/showroom', function(){
-    return view('page.showroom');
+    return view('page.showroom', [
+        'showrooms' => Showroom::orderBy('name')->get(),
+    ]);
 });
 
 Route::get('/booking', function(){
-    return view('page.booking.booking');
+    return view('page.booking.booking', [
+        'showrooms' => Showroom::orderBy('name')->get(),
+    ]);
 });
 
 // Booking Store Route (hidden from user)
