@@ -46,4 +46,5 @@ FRoute::post('/api/admin/cars', [AdminCarController::class, 'store']);
 FRoute::get('/api/admin/cars/{car}', [AdminCarController::class, 'show']);
 FRoute::patch('/api/admin/cars/{car}', [AdminCarController::class, 'update']);
 FRoute::delete('/api/admin/cars/{car}', [AdminCarController::class, 'destroy']);
+FRoute::post('/api/admin/showrooms', [AdminCarController::class, 'storeShowroom']);
 FRoute::get('/api/admin/showrooms', [AdminCarController::class, 'getShowrooms']);

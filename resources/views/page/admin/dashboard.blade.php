@@ -503,11 +503,20 @@
                             <label class="text-[9px] text-gray-500 block mb-1">Showroom Location *</label>
                             <select required id="car-showroom" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
                                 <option value="">-- Pilih Showroom --</option>
-                                <option value="1">Jakarta Experience Center</option>
-                                <option value="2">Surabaya Showroom</option>
-                                <option value="3">Bandung Gallery</option>
-                                <option value="4">Medan Branch</option>
                             </select>
+                        </div>
+
+                        <div class="bg-[#090a0d] border border-gray-800/70 rounded-lg p-4">
+                            <p class="text-[9px] text-neon uppercase font-bold tracking-widest mb-3">Belum ada showroom?</p>
+                            <div class="grid grid-cols-1 gap-3">
+                                <input type="text" id="new-showroom-name" placeholder="Nama Showroom" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                                <input type="text" id="new-showroom-address" placeholder="Alamat Showroom" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                                <input type="text" id="new-showroom-city" placeholder="Kota" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                                <input type="text" id="new-showroom-phone" placeholder="Telepon" class="w-full bg-black/60 border border-gray-800 focus:border-neon focus:outline-none text-white px-3 py-2 rounded text-xs">
+                                <button type="button" onclick="submitNewShowroom()" class="w-full bg-neon text-black font-bold text-[10px] py-3 uppercase tracking-widest hover:bg-lime-400 transition">
+                                    + Tambah Showroom
+                                </button>
+                            </div>
                         </div>
 
                         <div>
@@ -1187,6 +1196,11 @@
                 notes: document.getElementById('car-notes').value || null
             };
 
+            if (!carData.showroom_id) {
+                showToast('Pilih showroom terlebih dahulu atau tambahkan showroom baru.', 'error');
+                return;
+            }
+
             fetch('/api/admin/cars', {
                 method: 'POST',
                 headers: {
@@ -1218,6 +1232,73 @@
                 const errorMsg = error.message || 'Gagal menambahkan mobil. Cek console untuk detail.';
                 showToast('❌ Error: ' + errorMsg, 'error');
                 addActivityLog(`Failed to add vehicle. Error: ${errorMsg}`, 'red');
+            });
+        }
+
+        // Load and Display Showrooms
+        function loadShowrooms() {
+            fetch('/api/admin/showrooms', {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(showrooms => {
+                const showroomSelect = document.getElementById('car-showroom');
+                showroomSelect.innerHTML = '<option value="">-- Pilih Showroom --</option>';
+
+                showrooms.forEach(showroom => {
+                    const option = document.createElement('option');
+                    option.value = showroom.id;
+                    option.textContent = `${showroom.name} (${showroom.city})`;
+                    showroomSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading showrooms:', error);
+                showToast('Gagal memuat data showroom.', 'error');
+            });
+        }
+
+        function submitNewShowroom() {
+            const showroomData = {
+                name: document.getElementById('new-showroom-name').value,
+                address: document.getElementById('new-showroom-address').value,
+                city: document.getElementById('new-showroom-city').value,
+                phone: document.getElementById('new-showroom-phone').value
+            };
+
+            if (!showroomData.name || !showroomData.city) {
+                showToast('Nama dan kota showroom wajib diisi.', 'error');
+                return;
+            }
+
+            fetch('/api/admin/showrooms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify(showroomData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(err));
+                }
+                return response.json();
+            })
+            .then(data => {
+                showToast(`✓ Showroom ${data.name} berhasil ditambahkan.`, 'success');
+                document.getElementById('new-showroom-name').value = '';
+                document.getElementById('new-showroom-address').value = '';
+                document.getElementById('new-showroom-city').value = '';
+                document.getElementById('new-showroom-phone').value = '';
+                loadShowrooms();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const errorMsg = error.message || 'Gagal menambahkan showroom.';
+                showToast('❌ Error: ' + errorMsg, 'error');
             });
         }
 
@@ -1470,6 +1551,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadState();
             initTelemetryMeters();
+            loadShowrooms();
             loadCarsList();
 
             // Print Car Management Guide to Console

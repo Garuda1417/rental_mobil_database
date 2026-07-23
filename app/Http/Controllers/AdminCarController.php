@@ -57,6 +57,19 @@ class AdminCarController extends Controller
         return response()->json(['deleted' => true]);
     }
 
+    public function storeShowroom(Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
+            'city' => 'required|string|max:100',
+            'phone' => 'nullable|string|max:50',
+        ]);
+
+        $showroom = Showroom::create($data);
+        return response()->json($showroom, 201);
+    }
+
     public function getShowrooms()
     {
         $showrooms = Showroom::all(['id', 'name', 'city']);
