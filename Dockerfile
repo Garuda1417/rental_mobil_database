@@ -20,7 +20,9 @@ RUN apk add --no-cache \
 
 WORKDIR /var/www/html
 
-COPY composer.json .
+COPY composer.lock composer.json .
+COPY artisan .
+COPY bootstrap ./bootstrap
 RUN composer install --prefer-dist --no-interaction --optimize-autoloader
 
 COPY package.json .
